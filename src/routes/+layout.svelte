@@ -1,12 +1,21 @@
 <script lang="ts">
 	import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
+	import NProgress from 'nprogress';
+	import { afterNavigate, beforeNavigate } from '$app/navigation';
 
 	let { children } = $props();
-</script>
 
-<svelte:head>
-	<link rel="icon" href={favicon} />
-</svelte:head>
+	beforeNavigate(() => {
+		NProgress.start();
+	});
+
+	afterNavigate(() => {
+		NProgress.done();
+	});
+
+	NProgress.configure({
+		showSpinner: false
+	});
+</script>
 
 {@render children?.()}
