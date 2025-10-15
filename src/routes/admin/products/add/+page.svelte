@@ -2,15 +2,18 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import productSchema from '$lib/formSchema.js';
-	import { validators } from 'tailwind-merge';
+	import { productSchema } from '$lib/formSchema.js';
 	import { superForm, fileProxy } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Button } from '$lib/components/ui/button';
+	import Loader2 from '@lucide/svelte/icons/loader-2';
 
 	let { data } = $props();
+	// 2. formSchema를 사용하고, 타입 캐스팅(as any)을 제거합니다.
+	// Superforms는 load 함수에서 전달받은 스키마 구조를 사용하므로,
+	// zodClient에는 formSchema의 구조를 전달합니다.
 	const form = superForm(data.form, {
-		validators: zodClient(productSchema),
+		validators: zodClient(productSchema), // 폼 구조를 가진 formSchema 사용
 		validationMethod: 'auto'
 	});
 
@@ -79,7 +82,7 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Category</Form.Label>
-								<input {...props} type="text" bind:value={$formData.category} />
+								<input {...props} type="number" bind:value={$formData.category} />
 							{/snippet}
 						</Form.Control>
 
@@ -100,31 +103,35 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Images</Form.Label>
-
 							<input
 								{...props}
-								type="file"
-								accept="image/png, image/jpeg,"
-								multiple
+								accept="image/png, image/jpeg"
 								bind:files={$images}
+								type="file"
+								multiple
 							/>
 						{/snippet}
 					</Form.Control>
-
 					{#if $errors.images}
-						{#each $errors.images[0] as error}
-							<p class="text-sm font-medium text-destructive">{error}</p>
+						{#each $errors.images._errors as error}
+							<p class="text-red-600">{error}</p>
 						{/each}
 					{/if}
 
 					<Form.FieldErrors />
-
-					<div class="grid w-fit grid-cols-3 gap-2">
-						{#each previews as preview}
-							<img src={preview} alt="" class="bottom-2 size-20 rounded-md" />
-						{/each}
-					</div>
 				</Form.Field>
+				<div class="grid w-fit grid-cols-3 gap-2">
+					{#each previews as preview}
+						<img src={preview} alt="" class="size-20 rounded-md border-2" />
+					{/each}
+				</div>
+
+				<Button>
+					{#if $delayed}
+						<Loader2 class="size-6 animate-spin" />
+					{:else}Add Product
+					{/if}</Button
+				>
 			</Card.Content>
 		</Card.Root>
 	</form>

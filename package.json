@@ -57,8 +57,9 @@
 	},
 	"dependencies": {
 		"better-sqlite3": "^12.4.1",
+		"lucide-svelte": "^0.545.0",
 		"nprogress": "^0.2.0",
-		"zod": "^4.1.12"
+		"zod": "^3.23.8"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
